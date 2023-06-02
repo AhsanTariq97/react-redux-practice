@@ -6,7 +6,8 @@ import EditUserModal from './EditUserModal';
 const UserList = () => {
 
     const dispatch = useDispatch();
-    const { users, loading, error } = useSelector(state => state.users)
+    const { users} = useSelector(state => state.users)
+    const { loading, error } = useSelector(state => state.general)
 
   const [editUserModal, setEditUserModal] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);

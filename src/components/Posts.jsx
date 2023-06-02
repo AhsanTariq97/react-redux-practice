@@ -7,7 +7,8 @@ import NewPostModal from './NewPostModal';
 const Posts = () => {
 
     const dispatch = useDispatch();
-    const { posts, loading, error } = useSelector(state => state.posts)
+    const { posts } = useSelector(state => state.posts)
+    const { loading, error } = useSelector(state => state.general)
 
     const [newPostModal, setNewPostModal] = useState(false);
     const [editPostModal, setEditPostModal] = useState(false);

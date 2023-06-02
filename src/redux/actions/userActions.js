@@ -1,33 +1,24 @@
 import * as actionTypes from "./actionTypes";
 import axios from "axios";
-
-export const fetchUsersRequest = () => ({
-    type: actionTypes.FETCH_USERS_REQUEST,
-})
+import { clearError, hideLoading, setError, showLoading } from "./generalActions";
 
 export const fetchUsersSuccess = users => ({
     type: actionTypes.FETCH_USERS_SUCCESS,
     payload: users
 })
 
-export const fetchUsersFailure = error => ({
-    type: actionTypes.FETCH_USERS_FAILURE,
-    payload: error
-})
-
 export const fetchUsers = () => {
-    return (dispatch) => {
-      dispatch(fetchUsersRequest());
-      
-      axios.get('https://jsonplaceholder.typicode.com/users')
-        .then(response => {
-          const users = response.data;
-          dispatch(fetchUsersSuccess(users));
-        })
-        .catch(error => {
-          const errorMessage = error.message;
-          dispatch(fetchUsersFailure(errorMessage));
-        });
+    return async (dispatch) => {
+      dispatch(showLoading())
+      try {
+        const response = await axios.get('https://jsonplaceholder.typicode.com/users')
+        dispatch(fetchUsersSuccess(response.data))
+        dispatch(clearError())
+        dispatch(hideLoading())
+      } catch (error) {
+        dispatch(setError(error.message))
+        dispatch(hideLoading())
+      }
     };
 };
 

@@ -1,58 +1,41 @@
 import * as actionTypes from "./actionTypes";
 import axios from "axios";
-
-export const fetchPostsRequest = () => ({
-    type: actionTypes.FETCH_POSTS_REQUEST,
-})
+import { clearError, hideLoading, setError, showLoading } from "./generalActions";
 
 export const fetchPostsSuccess = posts => ({
     type: actionTypes.FETCH_POSTS_SUCCESS,
     payload: posts
 })
 
-export const fetchPostsFailure = error => ({
-    type: actionTypes.FETCH_POSTS_FAILURE,
-    payload: error
-})
-
 export const fetchPosts = () => {
-    return (dispatch) => {
-      dispatch(fetchPostsRequest());
-      
-      axios.get('https://jsonplaceholder.typicode.com/posts')
-        .then(response => {
-          const posts = response.data;
-          dispatch(fetchPostsSuccess(posts));
-        })
-        .catch(error => {
-          dispatch(fetchPostsFailure(error.message));
-        });
+    return async (dispatch) => {
+      dispatch(showLoading())
+      try {
+        const response = await axios.get('https://jsonplaceholder.typicode.com/posts')
+        dispatch(fetchPostsSuccess(response.data))
+        dispatch(clearError())
+        dispatch(hideLoading())
+      } catch (error) {
+        dispatch(setError(error.message))
+        dispatch(hideLoading())
+      }
     };
 };
-
-export const createPostRequest = () => ({
-  type: actionTypes.CREATE_POST_REQUEST,
-})
 
 export const createPostSuccess = post => ({
   type: actionTypes.CREATE_POST_SUCCESS,
   payload: post
 })
 
-export const createPostFailure = error => ({
-  type: actionTypes.CREATE_POST_FAILURE,
-  payload: error
-})
 
 export const createPost = (post) => {
   return async (dispatch) => {
-    dispatch(createPostRequest())
     try {
       const response = await axios.post('https://jsonplaceholder.typicode.com/posts', post);
-      const createdPost = response.data;
-      dispatch(createPostSuccess(createdPost));
+      dispatch(createPostSuccess(response.data));
+      dispatch(clearError())
     } catch (error) {
-      dispatch(createPostFailure(error.message));
+      dispatch(setError(error.message))
     }
   };
 };
